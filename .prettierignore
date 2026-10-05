@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+package-lock.json
+pnpm-lock.yaml
+AGENTS.md
+CLAUDE.md
+Agent.md
+*.png
