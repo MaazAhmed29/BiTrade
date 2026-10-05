@@ -16,7 +16,8 @@
     "test:market": "node scripts/verify-market.mjs",
     "test:charts": "node --env-file-if-exists=.env.local scripts/verify-charts.mjs",
     "test:trading": "node --env-file-if-exists=.env.local scripts/verify-trading.mjs",
-    "test:ai": "node --env-file-if-exists=.env.local scripts/verify-ai.mjs"
+    "test:ai": "node --env-file-if-exists=.env.local scripts/verify-ai.mjs",
+    "test:hardening": "node --env-file-if-exists=.env.local scripts/verify-hardening.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
