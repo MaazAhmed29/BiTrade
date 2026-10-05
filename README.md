@@ -75,7 +75,11 @@ The dashboard revalidates its displayed quote state about every 35 seconds while
 
 ## How paper trades are executed
 
-Pending Phase 4. Trades will be validated and executed server side in a single atomic database operation. The client supplied price is never trusted.
+Trades are submitted to `POST /api/trade`, which fetches a fresh Binance price on the server, validates the request schema, and converts the requested dollar amount or quantity using that trusted price. The client supplied price is never accepted.
+
+Execution then happens in a single PostgreSQL function (`execute_paper_trade`) that locks the paper account row, revalidates cash and holdings, and updates cash, holdings, and the trade record in one atomic transaction. Every request carries a unique execution token, so a duplicate submission can never execute twice. Validation failures are stored as `rejected` trade rows with their reason, which is what the history page shows.
+
+Rejected orders, insufficient cash, insufficient holdings, stale or unavailable prices, unknown assets, and non positive quantities all fail safely without changing balances.
 
 ## How the AI action approval works
 

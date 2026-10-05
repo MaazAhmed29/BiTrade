@@ -14,7 +14,8 @@
     "test:rls": "node --env-file-if-exists=.env.local scripts/verify-auth-rls.mjs",
     "test:auth": "node --env-file-if-exists=.env.local scripts/verify-auth-flows.mjs",
     "test:market": "node scripts/verify-market.mjs",
-    "test:charts": "node --env-file-if-exists=.env.local scripts/verify-charts.mjs"
+    "test:charts": "node --env-file-if-exists=.env.local scripts/verify-charts.mjs",
+    "test:trading": "node --env-file-if-exists=.env.local scripts/verify-trading.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

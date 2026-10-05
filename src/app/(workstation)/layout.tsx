@@ -29,6 +29,18 @@ export default async function WorkstationLayout({ children }: { children: React.
                 >
                   Markets
                 </Link>
+                <Link
+                  href="/portfolio"
+                  className="text-sm text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
+                >
+                  Portfolio
+                </Link>
+                <Link
+                  href="/history"
+                  className="text-sm text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
+                >
+                  History
+                </Link>
               </nav>
             </div>
             <div className="flex items-center gap-4">

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SUPPORTED_ASSETS } from "@/config/assets";
 import { AssetChartPanel } from "@/features/charts/asset-chart-panel";
 import { AssetStats } from "@/features/markets/asset-stats";
+import { TradePanel } from "@/features/trading/trade-panel";
 
 function resolveAsset(key: string) {
   const normalized = key.toLowerCase();
@@ -25,7 +26,14 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ as
         Back to markets
       </Link>
       <AssetStats assetId={asset.id} />
-      <AssetChartPanel assetId={asset.id} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <AssetChartPanel assetId={asset.id} />
+        </div>
+        <div>
+          <TradePanel assetId={asset.id} />
+        </div>
+      </div>
     </div>
   );
 }

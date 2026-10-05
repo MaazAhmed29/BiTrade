@@ -18,3 +18,19 @@ export async function requireUser(): Promise<{
     email: typeof claims.email === "string" ? claims.email : null,
   };
 }
+
+export async function getApiUser(): Promise<{
+  userId: string;
+  email: string | null;
+} | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+
+  if (error || !data?.claims) return null;
+
+  const claims = data.claims;
+  return {
+    userId: String(claims.sub),
+    email: typeof claims.email === "string" ? claims.email : null,
+  };
+}
