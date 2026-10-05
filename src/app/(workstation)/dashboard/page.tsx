@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/formatting/format";
+import { MarketOverview } from "@/features/markets/market-overview";
 
 type PaperAccountRow = {
   account_id: string;
@@ -51,12 +52,15 @@ export default async function DashboardPage() {
           </div>
           <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:col-span-2">
             <p className="text-sm text-[var(--color-text-muted)]">
-              Signed in as {user.email}. Market data, charts, and paper trading arrive in the next
-              phases.
+              Signed in as {user.email}. Charts and paper trading arrive in the next phases.
             </p>
           </div>
         </div>
       )}
+
+      <div className="mt-6">
+        <MarketOverview />
+      </div>
     </div>
   );
 }

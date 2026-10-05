@@ -10,6 +10,17 @@ const compactFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 });
 
+export function formatUsdPrice(value: string | number, decimals: number): string {
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) return "Unavailable";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: Math.min(decimals, 2),
+    maximumFractionDigits: decimals,
+  }).format(numeric);
+}
+
 export function formatCurrency(value: string | number): string {
   const numeric = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(numeric)) return "Unavailable";

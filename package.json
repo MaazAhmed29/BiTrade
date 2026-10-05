@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "check:rules": "node scripts/check-copy-rules.mjs",
     "test:rls": "node --env-file-if-exists=.env.local scripts/verify-auth-rls.mjs",
-    "test:auth": "node --env-file-if-exists=.env.local scripts/verify-auth-flows.mjs"
+    "test:auth": "node --env-file-if-exists=.env.local scripts/verify-auth-flows.mjs",
+    "test:market": "node scripts/verify-market.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
