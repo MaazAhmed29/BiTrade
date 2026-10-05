@@ -16,6 +16,15 @@ export const CANDLE_INTERVALS = ["1m", "5m", "15m", "1h", "4h", "1d"] as const;
 
 export type CandleInterval = (typeof CANDLE_INTERVALS)[number];
 
+export const CANDLE_INTERVAL_SECONDS: Record<CandleInterval, number> = {
+  "1m": 60,
+  "5m": 300,
+  "15m": 900,
+  "1h": 3600,
+  "4h": 14400,
+  "1d": 86400,
+};
+
 export const DEFAULT_CANDLE_INTERVAL: CandleInterval = "1h";
 
 export const CANDLE_REQUEST_LIMIT_DEFAULT = 200;

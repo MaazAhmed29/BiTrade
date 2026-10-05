@@ -13,11 +13,13 @@
     "check:rules": "node scripts/check-copy-rules.mjs",
     "test:rls": "node --env-file-if-exists=.env.local scripts/verify-auth-rls.mjs",
     "test:auth": "node --env-file-if-exists=.env.local scripts/verify-auth-flows.mjs",
-    "test:market": "node scripts/verify-market.mjs"
+    "test:market": "node scripts/verify-market.mjs",
+    "test:charts": "node --env-file-if-exists=.env.local scripts/verify-charts.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
+    "lightweight-charts": "^5.2.1",
     "next": "16.3.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"

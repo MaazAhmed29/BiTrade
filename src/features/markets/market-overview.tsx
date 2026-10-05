@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { SUPPORTED_ASSETS } from "@/config/assets";
 import { MARKET_DATA_SOURCE } from "@/config/market";
@@ -149,15 +150,20 @@ export function MarketOverview() {
                     {index + 1}
                   </td>
                   <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2.5">
+                    <Link
+                      href={`/markets/${asset.id}`}
+                      className="flex items-center gap-2.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                    >
                       <AssetBadge asset={asset} size="sm" />
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-sm font-medium">{asset.name}</span>
+                        <span className="text-sm font-medium transition group-hover:text-[var(--color-accent)]">
+                          {asset.name}
+                        </span>
                         <span className="text-xs text-[var(--color-text-faint)]">
                           {asset.symbol}
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-baseline gap-1.5">

@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/formatting/format";
 import { MarketOverview } from "@/features/markets/market-overview";
+import { DashboardChart } from "@/features/charts/dashboard-chart";
 
 type PaperAccountRow = {
   account_id: string;
@@ -60,6 +61,10 @@ export default async function DashboardPage() {
 
       <div className="mt-6">
         <MarketOverview />
+      </div>
+
+      <div className="mt-6">
+        <DashboardChart />
       </div>
     </div>
   );
