@@ -83,7 +83,13 @@ Rejected orders, insufficient cash, insufficient holdings, stale or unavailable 
 
 ## How the AI action approval works
 
-Pending Phase 5. The AI can only create a structured trade proposal. The proposal is shown to the user for explicit approval, after which the server revalidates the price and executes through the same paper trading engine used for manual trades.
+The assistant runs on a Gemini model through a server side provider adapter, configured with `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL`, and `AI_BASE_URL` in `.env.local`. All credentials stay server side. When no provider is configured the API returns a clear setup message and the rest of the app keeps working without the AI.
+
+For questions, the model calls read only tools (market quotes, portfolio, balance, holdings, history) that run with the signed in user's own database session, so it always answers from current server state and cannot reach another user's data.
+
+For trade requests, the model can only call `create_trade_proposal`, which validates the inputs, prices the order against a fresh Binance quote, and stores a pending proposal in `ai_action_logs`. Nothing is executed at that point. The proposal card shows the amount, estimated quantity, and reference price with a 90 second expiry, and the user must explicitly approve or reject it.
+
+Approval revalidates everything server side: the proposal status and expiry, a fresh price, and then the same atomic `execute_paper_trade` function used by manual trades, with the proposal ID as the execution token so a proposal can never execute twice. Rejections, expirations, and failed approvals are recorded on the proposal row. The AI has no tool that can move money, and prompt injection attempts cannot bypass the approval flow.
 
 ## Deploying to Vercel
 

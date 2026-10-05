@@ -12,6 +12,7 @@ import {
 import { loadPortfolioValuation, listTrades } from "@/lib/trading/portfolio";
 import { MarketOverview } from "@/features/markets/market-overview";
 import { DashboardChart } from "@/features/charts/dashboard-chart";
+import { AssistantPanel } from "@/features/ai/assistant-panel";
 
 function pnlClass(value: string): string {
   const numeric = Number(value);
@@ -204,6 +205,10 @@ export default async function DashboardPage() {
           ) : null}
         </>
       )}
+
+      <div className="mt-6">
+        <AssistantPanel />
+      </div>
 
       <div className="mt-6">
         <MarketOverview />
