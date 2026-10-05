@@ -187,7 +187,7 @@ function ProposalCard({
   );
 }
 
-export function AssistantPanel() {
+export function AssistantPanel({ available = true }: { available?: boolean }) {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -345,13 +345,34 @@ export function AssistantPanel() {
   }
 
   return (
-    <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-base font-semibold">AI assistant</h2>
-        <span className="text-xs text-[var(--color-text-faint)]">
+    <section
+      id="assistant"
+      className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base font-semibold">AI assistant</h2>
+          <span className="flex items-center gap-1.5 text-xs text-[var(--color-text-faint)]">
+            <span
+              aria-hidden="true"
+              className={`h-1.5 w-1.5 rounded-full ${
+                available ? "bg-[var(--color-positive)]" : "bg-[var(--color-text-faint)]"
+              }`}
+            />
+            {available ? "Online" : "Unavailable"}
+          </span>
+        </div>
+        <span className="hidden text-xs text-[var(--color-text-faint)] sm:inline">
           Paper trades only. You approve every trade.
         </span>
       </div>
+
+      {available ? null : (
+        <p className="mt-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-xs text-[var(--color-text-muted)]">
+          The AI provider is not configured on this deployment. Add AI credentials in the server
+          environment to enable the assistant.
+        </p>
+      )}
 
       <div className="mt-3 flex max-h-96 min-h-48 flex-col gap-3 overflow-y-auto pr-1">
         {messages.length === 0 ? (

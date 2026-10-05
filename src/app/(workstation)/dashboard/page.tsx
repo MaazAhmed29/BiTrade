@@ -3,13 +3,9 @@ import { getAssetById } from "@/config/assets";
 import { AssetBadge } from "@/components/asset-badge";
 import { requireUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
-import {
-  formatCurrency,
-  formatCryptoQuantity,
-  formatPercent,
-  formatUsdPrice,
-} from "@/lib/formatting/format";
+import { formatCurrency, formatCryptoQuantity, formatPercent } from "@/lib/formatting/format";
 import { loadPortfolioValuation, listTrades } from "@/lib/trading/portfolio";
+import { getAiConfig } from "@/lib/ai/config";
 import { MarketOverview } from "@/features/markets/market-overview";
 import { DashboardChart } from "@/features/charts/dashboard-chart";
 import { AssistantPanel } from "@/features/ai/assistant-panel";
@@ -20,202 +16,224 @@ function pnlClass(value: string): string {
   return numeric > 0 ? "text-[var(--color-positive)]" : "text-[var(--color-negative)]";
 }
 
+function StatCard({
+  label,
+  value,
+  valueClassName = "",
+  footnote,
+  footnoteClassName = "",
+}: {
+  label: string;
+  value: string;
+  valueClassName?: string;
+  footnote?: string;
+  footnoteClassName?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+      <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">{label}</p>
+      <p className={`mt-2 font-mono text-2xl ${valueClassName}`}>{value}</p>
+      {footnote ? <p className={`mt-1 text-xs ${footnoteClassName}`}>{footnote}</p> : null}
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const supabase = await createClient();
   const portfolio = await loadPortfolioValuation(supabase);
   const recentTrades = portfolio ? await listTrades(supabase, { limit: 5 }) : [];
+  const aiAvailable = getAiConfig() !== null;
+  const displayName = (user.email ?? "Trader").split("@")[0] || "Trader";
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-            Your paper trading account. Everything here is simulated with no real money.
-          </p>
-        </div>
-        <span className="hidden text-xs text-[var(--color-text-faint)] sm:inline">
-          Signed in as {user.email}
-        </span>
-      </div>
-
-      {!portfolio ? (
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-          <p className="text-sm font-medium">Account unavailable</p>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-            Your paper account could not be loaded. Make sure the Supabase migrations have been
-            applied, then reload this page.
-          </p>
-        </div>
-      ) : (
-        <>
-          {portfolio.valuationStatus !== "ok" ? (
-            <div className="mb-4 rounded-lg border border-[var(--color-negative)] px-4 py-3 text-sm text-[var(--color-negative)]">
-              Market price data is stale or unavailable for{" "}
-              {[...portfolio.unavailableAssetIds, ...portfolio.staleAssetIds].join(", ")}. Those
-              assets are excluded from the valuation instead of being counted as zero.
-            </div>
-          ) : null}
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+            <h1 className="text-xl font-semibold tracking-tight">Welcome back, {displayName}</h1>
+            <p className="mt-1 max-w-xl text-sm text-[var(--color-text-muted)]">
+              Your demo trading account is ready. Explore the market, track your portfolio and
+              request your next paper trade.
+            </p>
+            <div className="mt-4 inline-flex flex-col gap-1 rounded-lg border border-[var(--color-accent)]/50 bg-[var(--color-background)] px-5 py-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">
-                Total portfolio value
+                Demo Balance
               </p>
-              <p className="mt-2 font-mono text-2xl">{formatCurrency(portfolio.totalValue)}</p>
-            </div>
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">
-                Cash balance
-              </p>
-              <p className="mt-2 font-mono text-2xl">{formatCurrency(portfolio.cashBalance)}</p>
-              <p className="mt-1 text-xs text-[var(--color-text-faint)]">
-                Starting balance {formatCurrency(portfolio.initialBalance)}, granted once.
-              </p>
-            </div>
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">
-                Total profit and loss
-              </p>
-              <p className={`mt-2 font-mono text-2xl ${pnlClass(portfolio.profitLoss)}`}>
-                {formatCurrency(portfolio.profitLoss)}
-              </p>
-              <p className={`mt-1 text-xs ${pnlClass(portfolio.returnPercent)}`}>
-                {formatPercent(Number(portfolio.returnPercent))} return
-              </p>
-            </div>
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">
-                Unrealized profit and loss
-              </p>
-              <p className={`mt-2 font-mono text-2xl ${pnlClass(portfolio.unrealizedPnl)}`}>
-                {formatCurrency(portfolio.unrealizedPnl)}
-              </p>
-              <p className="mt-1 text-xs text-[var(--color-text-faint)]">
-                Realized: {formatCurrency(portfolio.realizedPnl)}
-              </p>
-            </div>
-          </div>
-
-          {portfolio.holdings.length > 0 ? (
-            <section className="mt-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-                <h2 className="text-base font-semibold">Holdings</h2>
-                <Link
-                  href="/portfolio"
-                  className="text-xs text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
-                >
-                  View portfolio
-                </Link>
+              <div className="flex items-baseline gap-3">
+                <p className="font-mono text-2xl font-semibold">
+                  {formatCurrency(portfolio?.initialBalance ?? "10000")}
+                </p>
+                <span className="text-xs text-[var(--color-text-faint)]">starting balance</span>
               </div>
-              <ul className="divide-y divide-[var(--color-border)]">
-                {portfolio.holdings.map((holding) => {
-                  const asset = getAssetById(holding.assetId);
-                  return (
-                    <li
-                      key={holding.assetId}
-                      className="flex items-center justify-between px-4 py-2.5"
+              <p className="text-xs text-[var(--color-text-faint)]">
+                Granted once. Current cash: {formatCurrency(portfolio?.cashBalance ?? "0")}
+              </p>
+            </div>
+          </section>
+
+          {!portfolio ? (
+            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+              <p className="text-sm font-medium">Account unavailable</p>
+              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+                Your paper account could not be loaded. Make sure the Supabase migrations have been
+                applied, then reload this page.
+              </p>
+            </div>
+          ) : (
+            <>
+              {portfolio.valuationStatus !== "ok" ? (
+                <div className="rounded-lg border border-[var(--color-negative)] px-4 py-3 text-sm text-[var(--color-negative)]">
+                  Market price data is stale or unavailable for{" "}
+                  {[...portfolio.unavailableAssetIds, ...portfolio.staleAssetIds].join(", ")}. Those
+                  assets are excluded from the valuation instead of being counted as zero.
+                </div>
+              ) : null}
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <StatCard
+                  label="Total portfolio value"
+                  value={formatCurrency(portfolio.totalValue)}
+                />
+                <StatCard
+                  label="Cash balance"
+                  value={formatCurrency(portfolio.cashBalance)}
+                  footnote={`Starting balance ${formatCurrency(portfolio.initialBalance)}, granted once.`}
+                  footnoteClassName="text-[var(--color-text-faint)]"
+                />
+                <StatCard
+                  label="Total profit and loss"
+                  value={formatCurrency(portfolio.profitLoss)}
+                  valueClassName={pnlClass(portfolio.profitLoss)}
+                  footnote={`${formatPercent(Number(portfolio.returnPercent))} return`}
+                  footnoteClassName={pnlClass(portfolio.returnPercent)}
+                />
+                <StatCard
+                  label="Unrealized profit and loss"
+                  value={formatCurrency(portfolio.unrealizedPnl)}
+                  valueClassName={pnlClass(portfolio.unrealizedPnl)}
+                  footnote={`Realized: ${formatCurrency(portfolio.realizedPnl)}`}
+                  footnoteClassName="text-[var(--color-text-faint)]"
+                />
+              </div>
+
+              <MarketOverview showViewAll />
+
+              {portfolio.holdings.length > 0 ? (
+                <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+                  <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+                    <h2 className="text-base font-semibold">Holdings</h2>
+                    <Link
+                      href="/portfolio"
+                      className="text-xs text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
                     >
-                      <Link
-                        href={`/markets/${holding.assetId}`}
-                        className="flex items-center gap-2.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-                      >
-                        {asset ? <AssetBadge asset={asset} size="sm" /> : null}
-                        <span className="text-sm font-medium">
-                          {asset?.name ?? holding.assetId}
-                        </span>
-                        <span className="text-xs text-[var(--color-text-faint)]">
-                          {formatCryptoQuantity(holding.quantity)} {asset?.symbol}
-                        </span>
-                      </Link>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="font-mono text-[var(--color-text-muted)]">
-                          {holding.marketValue
-                            ? formatCurrency(holding.marketValue)
-                            : "Unavailable"}
-                        </span>
-                        <span className={`font-mono ${pnlClass(holding.unrealizedPnl ?? "0")}`}>
-                          {holding.unrealizedPnl
-                            ? formatCurrency(holding.unrealizedPnl)
-                            : "Unavailable"}
-                        </span>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ) : null}
+                      View portfolio
+                    </Link>
+                  </div>
+                  <ul className="divide-y divide-[var(--color-border)]">
+                    {portfolio.holdings.map((holding) => {
+                      const asset = getAssetById(holding.assetId);
+                      return (
+                        <li
+                          key={holding.assetId}
+                          className="flex items-center justify-between px-4 py-2.5"
+                        >
+                          <Link
+                            href={`/markets/${holding.assetId}`}
+                            className="flex items-center gap-2.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                          >
+                            {asset ? <AssetBadge asset={asset} size="sm" /> : null}
+                            <span className="text-sm font-medium">
+                              {asset?.name ?? holding.assetId}
+                            </span>
+                            <span className="text-xs text-[var(--color-text-faint)]">
+                              {formatCryptoQuantity(holding.quantity)} {asset?.symbol}
+                            </span>
+                          </Link>
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="font-mono text-[var(--color-text-muted)]">
+                              {holding.marketValue
+                                ? formatCurrency(holding.marketValue)
+                                : "Unavailable"}
+                            </span>
+                            <span className={`font-mono ${pnlClass(holding.unrealizedPnl ?? "0")}`}>
+                              {holding.unrealizedPnl
+                                ? formatCurrency(holding.unrealizedPnl)
+                                : "Unavailable"}
+                            </span>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ) : null}
+            </>
+          )}
+        </div>
 
-          {recentTrades.length > 0 ? (
-            <section className="mt-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-                <h2 className="text-base font-semibold">Recent trades</h2>
-                <Link
-                  href="/history"
-                  className="text-xs text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
-                >
-                  View history
-                </Link>
-              </div>
+        <div className="flex min-w-0 flex-col gap-6">
+          <DashboardChart />
+
+          <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+            <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+              <h2 className="text-base font-semibold">Recent Activity</h2>
+              <Link
+                href="/history"
+                className="text-xs text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
+              >
+                View history
+              </Link>
+            </div>
+            {recentTrades.length === 0 ? (
+              <p className="px-4 py-4 text-sm text-[var(--color-text-muted)]">
+                No trades yet. Your executed paper trades will appear here.
+              </p>
+            ) : (
               <ul className="divide-y divide-[var(--color-border)]">
                 {recentTrades.map((trade) => {
                   const asset = getAssetById(trade.assetId);
+                  const isBuy = trade.side === "buy";
                   return (
-                    <li key={trade.id} className="flex items-center justify-between px-4 py-2.5">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`text-xs font-semibold ${
-                            trade.side === "buy"
-                              ? "text-[var(--color-positive)]"
-                              : "text-[var(--color-negative)]"
-                          }`}
-                        >
-                          {trade.side === "buy" ? "BUY" : "SELL"}
-                        </span>
-                        <span className="text-sm">
+                    <li key={trade.id} className="flex items-center gap-3 px-4 py-3">
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${
+                          isBuy ? "bg-[var(--color-positive)]" : "bg-[var(--color-negative)]"
+                        }`}
+                      >
+                        {isBuy ? "B" : "S"}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm">
+                          {isBuy ? "Bought " : "Sold "}
                           {formatCryptoQuantity(trade.quantity)} {asset?.symbol ?? trade.assetId}
-                        </span>
-                        <span className="font-mono text-xs text-[var(--color-text-faint)]">
-                          {formatUsdPrice(trade.executionPrice, asset?.displayDecimals ?? 2)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {trade.status === "rejected" ? (
-                          <span className="text-[11px] text-[var(--color-negative)]">Rejected</span>
-                        ) : null}
-                        <span className="font-mono text-sm text-[var(--color-text-muted)]">
-                          {formatCurrency(trade.notionalValue)}
-                        </span>
-                        <span className="text-[11px] text-[var(--color-text-faint)]">
+                        </p>
+                        <p className="text-[11px] text-[var(--color-text-faint)]">
                           {new Date(trade.createdAt).toLocaleString("en-US", {
                             month: "short",
                             day: "numeric",
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
-                        </span>
+                          {trade.source === "ai" ? " · AI" : ""}
+                          {trade.status === "rejected" ? (
+                            <span className="text-[var(--color-negative)]"> · Rejected</span>
+                          ) : null}
+                        </p>
                       </div>
+                      <span className="shrink-0 font-mono text-sm text-[var(--color-text-muted)]">
+                        {formatCurrency(trade.notionalValue)}
+                      </span>
                     </li>
                   );
                 })}
               </ul>
-            </section>
-          ) : null}
-        </>
-      )}
+            )}
+          </section>
 
-      <div className="mt-6">
-        <AssistantPanel />
-      </div>
-
-      <div className="mt-6">
-        <MarketOverview />
-      </div>
-
-      <div className="mt-6">
-        <DashboardChart />
+          <AssistantPanel available={aiAvailable} />
+        </div>
       </div>
     </div>
   );

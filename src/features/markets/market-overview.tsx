@@ -7,6 +7,7 @@ import { MARKET_DATA_SOURCE } from "@/config/market";
 import { AssetBadge } from "@/components/asset-badge";
 import { useMarketFeed } from "@/features/markets/market-feed-context";
 import { quoteStatus } from "@/features/markets/quote-status";
+import { Sparkline } from "@/features/markets/sparkline";
 import {
   formatCompactNumber,
   formatPercent,
@@ -32,7 +33,7 @@ function SkeletonRows() {
     <>
       {Array.from({ length: 5 }).map((_, index) => (
         <tr key={index} className="border-t border-[var(--color-border)]">
-          <td colSpan={7} className="px-3 py-3">
+          <td colSpan={10} className="px-3 py-3">
             <div className="h-4 w-full animate-pulse rounded bg-[var(--color-surface-raised)]" />
           </td>
         </tr>
@@ -41,7 +42,7 @@ function SkeletonRows() {
   );
 }
 
-export function MarketOverview() {
+export function MarketOverview({ showViewAll = false }: { showViewAll?: boolean }) {
   const { quotes, initialLoading, error, now, refresh } = useMarketFeed();
   const [query, setQuery] = useState("");
 
@@ -67,7 +68,7 @@ export function MarketOverview() {
             Source: Binance public market data ({MARKET_DATA_SOURCE})
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <label htmlFor="market-search" className="sr-only">
             Search assets
           </label>
@@ -79,6 +80,14 @@ export function MarketOverview() {
             placeholder="Search assets"
             className="w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-background)] px-3 py-1.5 text-sm outline-none transition focus:border-[var(--color-accent)] sm:w-56"
           />
+          {showViewAll ? (
+            <Link
+              href="/markets"
+              className="shrink-0 text-sm font-medium text-[var(--color-accent)] transition hover:text-[var(--color-accent-hover)]"
+            >
+              View All
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -122,8 +131,14 @@ export function MarketOverview() {
               <th scope="col" className="hidden px-3 py-2.5 font-medium lg:table-cell">
                 24h Volume
               </th>
+              <th scope="col" className="hidden px-3 py-2.5 font-medium md:table-cell">
+                7D Chart
+              </th>
               <th scope="col" className="px-3 py-2.5 font-medium">
                 Status
+              </th>
+              <th scope="col" className="px-3 py-2.5 text-right font-medium">
+                <span className="sr-only">Actions</span>
               </th>
             </tr>
           </thead>
@@ -197,6 +212,9 @@ export function MarketOverview() {
                   <td className="hidden px-3 py-2.5 font-mono text-sm text-[var(--color-text-muted)] lg:table-cell">
                     {quote?.volume24hUsd ? formatCompactNumber(quote.volume24hUsd) : "Unavailable"}
                   </td>
+                  <td className="hidden px-3 py-2.5 md:table-cell">
+                    <Sparkline assetId={asset.id} stableReference={asset.stableReference} />
+                  </td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-center gap-2">
                       <span
@@ -212,6 +230,14 @@ export function MarketOverview() {
                         </span>
                       ) : null}
                     </div>
+                  </td>
+                  <td className="px-3 py-2.5 text-right">
+                    <Link
+                      href={`/markets/${asset.id}`}
+                      className="inline-block rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[var(--color-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]"
+                    >
+                      Trade
+                    </Link>
                   </td>
                 </tr>
               );

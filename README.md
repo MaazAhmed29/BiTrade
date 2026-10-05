@@ -39,6 +39,8 @@ npm run check:rules    verify no emoji, no em dash, and no gradients in source
 2. In the SQL Editor, run the migrations in order:
    1. `supabase/migrations/0001_init_auth_and_paper_tables.sql`
    2. `supabase/migrations/0002_grants.sql`
+   3. `supabase/migrations/0003_execute_paper_trade.sql`
+   4. `supabase/migrations/0004_ai_action_log_policies.sql`
 3. For local development, disable email confirmation: Authentication, Providers, Email, uncheck "Confirm email". Re-enable it before production.
 4. Copy the Project URL and publishable key from Settings, API into `.env.local`.
 
@@ -47,9 +49,15 @@ The schema contains `profiles`, `paper_accounts`, `holdings`, `trades`, and `ai_
 Test commands:
 
 ```text
-npm run test:rls    verifies account initialization and user data isolation
-npm run test:auth   verifies signup, login, protected routes, and redirects (requires npm run dev)
+npm run test:rls      verifies account initialization and user data isolation
+npm run test:auth     verifies signup, login, protected routes, and redirects
+npm run test:market   verifies market snapshots, candles, and WebSocket data
+npm run test:charts   verifies candle data and page rendering
+npm run test:trading  verifies paper trade execution, validation, and history
+npm run test:ai       verifies the AI chat, proposals, and approval flow
 ```
+
+All test commands except `test:rls` expect `npm run dev` to be running on port 3000.
 
 ## Environment variables
 
@@ -90,6 +98,10 @@ For questions, the model calls read only tools (market quotes, portfolio, balanc
 For trade requests, the model can only call `create_trade_proposal`, which validates the inputs, prices the order against a fresh Binance quote, and stores a pending proposal in `ai_action_logs`. Nothing is executed at that point. The proposal card shows the amount, estimated quantity, and reference price with a 90 second expiry, and the user must explicitly approve or reject it.
 
 Approval revalidates everything server side: the proposal status and expiry, a fresh price, and then the same atomic `execute_paper_trade` function used by manual trades, with the proposal ID as the execution token so a proposal can never execute twice. Rejections, expirations, and failed approvals are recorded on the proposal row. The AI has no tool that can move money, and prompt injection attempts cannot bypass the approval flow.
+
+## Workstation interface
+
+The signed in app uses a persistent left sidebar (Home, Markets, Portfolio, History, Settings) with a mobile drawer, and a top bar with coin search, the live market data indicator, and an account menu with sign out. The dashboard shows a welcome card with the demo balance, account summary cards, the top 15 cryptocurrency table with sparklines and trade links, holdings, the selected asset chart, recent activity, and the AI assistant. Asset detail pages combine the price chart, stats, the trade panel, and a link into the assistant. The Settings page shows account, paper account, market data, and AI configuration state.
 
 ## Deploying to Vercel
 

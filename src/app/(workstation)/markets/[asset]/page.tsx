@@ -30,8 +30,20 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ as
         <div className="lg:col-span-2">
           <AssetChartPanel assetId={asset.id} />
         </div>
-        <div>
+        <div className="flex flex-col gap-4">
           <TradePanel assetId={asset.id} />
+          <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <h2 className="text-sm font-semibold">AI assistant</h2>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+              Ask about {asset.name}, your portfolio, or request a paper trade with your approval.
+            </p>
+            <Link
+              href="/dashboard#assistant"
+              className="mt-3 inline-block rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[var(--color-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]"
+            >
+              Open assistant
+            </Link>
+          </section>
         </div>
       </div>
     </div>
