@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:rules": "node scripts/check-copy-rules.mjs",
-    "test:rls": "node scripts/verify-auth-rls.mjs"
+    "test:rls": "node --env-file-if-exists=.env.local scripts/verify-auth-rls.mjs",
+    "test:auth": "node --env-file-if-exists=.env.local scripts/verify-auth-flows.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

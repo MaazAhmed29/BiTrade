@@ -35,7 +35,21 @@ npm run check:rules    verify no emoji, no em dash, and no gradients in source
 
 ## Supabase setup
 
-Pending. A Supabase project is required for authentication and paper trading state. Setup instructions and migrations will be added in Phase 1.
+1. Create a free project at supabase.com.
+2. In the SQL Editor, run the migrations in order:
+   1. `supabase/migrations/0001_init_auth_and_paper_tables.sql`
+   2. `supabase/migrations/0002_grants.sql`
+3. For local development, disable email confirmation: Authentication, Providers, Email, uncheck "Confirm email". Re-enable it before production.
+4. Copy the Project URL and publishable key from Settings, API into `.env.local`.
+
+The schema contains `profiles`, `paper_accounts`, `holdings`, `trades`, and `ai_action_logs`. A database trigger creates the profile and the one time $10,000 paper account at signup, and Row Level Security keeps every user's rows private.
+
+Test commands:
+
+```text
+npm run test:rls    verifies account initialization and user data isolation
+npm run test:auth   verifies signup, login, protected routes, and redirects (requires npm run dev)
+```
 
 ## Environment variables
 
