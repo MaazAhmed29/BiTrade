@@ -105,7 +105,36 @@ The signed in app uses a persistent left sidebar (Home, Markets, Portfolio, Hist
 
 ## Deploying to Vercel
 
-Pending Phase 7. The target is the Vercel Hobby plan with no paid services.
+Target: Vercel Hobby plan with no paid services.
+
+1. Push the repository to GitHub.
+2. In Vercel, import the repository with the Next.js framework preset.
+3. Set the environment variables for the deployment:
+   - `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from Supabase Settings, API.
+   - `SUPABASE_SERVICE_ROLE_KEY` optional, only used by `npm run test:rls` cleanup, never by the app.
+   - `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL` to enable the AI assistant, or leave them empty to run without AI.
+4. Deploy.
+5. In Supabase, Authentication, URL Configuration: set the Site URL to the production URL and add it to the Redirect URLs list.
+6. Run the test suites against the deployed URL to confirm signup, market data, paper trades, and the AI chat.
+
+The app has no other runtime configuration. Market data uses public Binance endpoints with no API key, and all AI credentials stay server side.
+
+## Final verification commands
+
+```text
+npm run typecheck        TypeScript check
+npm run lint             ESLint
+npm run check:rules      copy rules (no emoji, em dash, gradients)
+npm run test:hardening   secrets, env vars, exchange isolation, reconnect logic
+npm run test:rls         RLS and account initialization
+npm run test:auth        auth flows (requires npm run dev)
+npm run test:market      market snapshot and WebSocket data
+npm run test:charts      candles and page rendering
+npm run test:trading     paper trade execution and history
+npm run test:ai          AI chat, proposals, approval flow
+```
+
+Run `npm run build && npm run start` to verify the production build locally before deploying.
 
 ## Known limitations
 
