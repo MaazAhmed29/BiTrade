@@ -49,6 +49,7 @@ export async function GET(request: Request) {
       {
         headers: {
           "Cache-Control": `public, s-maxage=${MARKET_CANDLE_CACHE_MS / 1000}, stale-while-revalidate=60`,
+          "Vercel-CDN-Cache-Control": `public, max-age=${MARKET_CANDLE_CACHE_MS / 1000}, s-maxage=${MARKET_CANDLE_CACHE_MS / 1000}, stale-while-revalidate=60`,
         },
       },
     );

@@ -44,7 +44,12 @@ export async function GET(request: Request) {
     const quotes = await provider.getSnapshot(assetIds);
     return NextResponse.json(
       { quotes },
-      { headers: { "Cache-Control": "public, s-maxage=15, stale-while-revalidate=30" } },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=15, stale-while-revalidate=30",
+          "Vercel-CDN-Cache-Control": "public, max-age=15, s-maxage=15, stale-while-revalidate=30",
+        },
+      },
     );
   } catch {
     return NextResponse.json(
