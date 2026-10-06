@@ -1,5 +1,3 @@
-import { getAiConfig } from "@/lib/ai/config";
-import { MARKET_DATA_SOURCE } from "@/config/market";
 import { requireUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { loadPortfolioValuation } from "@/lib/trading/portfolio";
@@ -30,7 +28,6 @@ export default async function SettingsPage() {
   const user = await requireUser();
   const supabase = await createClient();
   const portfolio = await loadPortfolioValuation(supabase);
-  const aiConfig = getAiConfig();
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
@@ -59,18 +56,6 @@ export default async function SettingsPage() {
             label="Account state"
             value={portfolio?.holdings.length ? "Active" : "No holdings yet"}
           />
-        </Section>
-
-        <Section title="Market data">
-          <Row label="Source" value={`Binance public market data (${MARKET_DATA_SOURCE})`} />
-          <Row label="API key required" value="No" />
-          <Row label="Refresh cadence" value="About every 35 seconds" />
-        </Section>
-
-        <Section title="AI assistant">
-          <Row label="Status" value={aiConfig ? "Configured" : "Not configured"} />
-          <Row label="Provider" value={aiConfig ? aiConfig.provider : "Unavailable"} />
-          <Row label="Model" value={aiConfig ? aiConfig.model : "Unavailable"} />
         </Section>
 
         <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

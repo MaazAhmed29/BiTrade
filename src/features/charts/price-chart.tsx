@@ -248,7 +248,7 @@ export function PriceChart({
 
   return (
     <div className="w-full">
-      <div className="flex h-6 items-center gap-3 overflow-x-auto text-xs text-[var(--color-text-muted)]">
+      <div className="flex h-6 items-center gap-3 overflow-hidden whitespace-nowrap text-xs text-[var(--color-text-muted)]">
         {legendBar ? (
           <>
             <span className="font-mono">
