@@ -21,15 +21,17 @@ function SummaryCard({
   label,
   value,
   detail,
+  valueClassName,
 }: {
   label: string;
   value: string;
   detail?: React.ReactNode;
+  valueClassName?: string;
 }) {
   return (
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       <p className="text-xs uppercase tracking-wide text-[var(--color-text-faint)]">{label}</p>
-      <p className="mt-2 font-mono text-2xl">{value}</p>
+      <p className={`mt-2 font-mono text-2xl ${valueClassName ?? ""}`}>{value}</p>
       {detail ? <div className="mt-1 text-xs text-[var(--color-text-faint)]">{detail}</div> : null}
     </div>
   );
@@ -73,12 +75,7 @@ export default async function PortfolioPage() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Portfolio</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-            Simulated account valued at live public market prices.
-          </p>
-        </div>
+        <h1 className="text-xl font-semibold tracking-tight">Portfolio</h1>
         <Link
           href="/history"
           className="text-sm text-[var(--color-text-muted)] transition hover:text-[var(--color-foreground)]"
@@ -95,6 +92,7 @@ export default async function PortfolioPage() {
         <SummaryCard
           label="Total profit and loss"
           value={formatCurrency(portfolio.profitLoss)}
+          valueClassName={pnlClass(portfolio.profitLoss)}
           detail={
             <span className={pnlClass(portfolio.returnPercent)}>
               {formatPercent(returnNumeric)} return on {formatCurrency(portfolio.initialBalance)}
