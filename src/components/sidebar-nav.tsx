@@ -64,7 +64,7 @@ function Brand({ onNavigate }: { onNavigate?: () => void }) {
       className="flex items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
     >
       <LogoMark className="h-7 w-7" />
-      <span className="text-lg font-semibold tracking-tight">BiTrade</span>
+      <span className="font-display text-lg tracking-wide">BiTrade</span>
     </Link>
   );
 }
@@ -144,7 +144,7 @@ export function MobileBrand() {
   return (
     <span className="flex items-center gap-2 lg:hidden">
       <LogoMark className="h-6 w-6" />
-      <span className="text-sm font-semibold tracking-tight">BiTrade</span>
+      <span className="font-display text-sm tracking-wide">BiTrade</span>
     </span>
   );
 }
