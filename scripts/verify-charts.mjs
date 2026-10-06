@@ -103,7 +103,7 @@ async function main() {
     byId.status === 200 && byId.body?.candles?.length === 3,
   );
 
-  for (const interval of ["1m", "5m", "15m", "1h", "4h", "1d"]) {
+  for (const interval of ["1m", "5m", "15m", "1h", "4h", "1d", "1w"]) {
     const result = await getCandles(`asset=ETH&interval=${interval}&limit=3`);
     check(
       `Interval ${interval} returns candles`,
@@ -287,7 +287,9 @@ async function main() {
   const dashboard = await fetchPage("/dashboard");
   check(
     "Signed in: dashboard renders with the selected asset chart",
-    dashboard.status === 200 && dashboard.body.includes("Selected asset chart"),
+    dashboard.status === 200 &&
+      dashboard.body.includes("Chart range") &&
+      dashboard.body.includes("Charting Bitcoin"),
     `status=${dashboard.status}`,
   );
   check(

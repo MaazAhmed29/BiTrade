@@ -6,6 +6,4 @@ export const CHART_COLORS = {
   up: "#22c55e",
   down: "#ef4444",
   accent: "#2563eb",
-  volumeUp: "rgba(34, 197, 94, 0.35)",
-  volumeDown: "rgba(239, 68, 68, 0.35)",
 } as const;

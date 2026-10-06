@@ -1,59 +1,47 @@
 "use client";
 
-import { useState } from "react";
-import { getAssetById, SUPPORTED_ASSETS } from "@/config/assets";
-import { DEFAULT_CANDLE_INTERVAL, type CandleInterval } from "@/config/market";
-import { IntervalSelector } from "./interval-selector";
+import { useState, type ReactNode } from "react";
+import { getAssetById } from "@/config/assets";
+import { CHART_RANGES, DEFAULT_CHART_RANGE, type ChartRangeId } from "@/config/market";
+import { RangeSelector } from "./interval-selector";
 import { PriceChart } from "./price-chart";
 
 export function AssetChartPanel({
   assetId,
-  onAssetChange,
   title = "Price chart",
+  header,
+  footer,
 }: {
   assetId: string;
-  onAssetChange?: (assetId: string) => void;
   title?: string;
+  header?: ReactNode;
+  footer?: ReactNode;
 }) {
-  const [interval, setInterval] = useState<CandleInterval>(DEFAULT_CANDLE_INTERVAL);
+  const [rangeId, setRangeId] = useState<ChartRangeId>(DEFAULT_CHART_RANGE);
+  const range = CHART_RANGES.find((entry) => entry.id === rangeId) ?? CHART_RANGES[0];
   const asset = getAssetById(assetId);
 
   return (
     <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+      {header ? (
+        <div className="mb-3">{header}</div>
+      ) : (
+        <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold">{title}</h2>
-          {onAssetChange ? (
-            <>
-              <label htmlFor="chart-asset" className="sr-only">
-                Select asset
-              </label>
-              <select
-                id="chart-asset"
-                value={assetId}
-                onChange={(event) => onAssetChange(event.target.value)}
-                className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-background)] px-2 py-1.5 text-sm outline-none transition focus:border-[var(--color-accent)]"
-              >
-                {SUPPORTED_ASSETS.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name} ({option.symbol})
-                  </option>
-                ))}
-              </select>
-            </>
-          ) : (
-            asset && (
-              <span className="text-xs text-[var(--color-text-faint)]">
-                {asset.name} ({asset.symbol})
-              </span>
-            )
-          )}
+          {asset ? (
+            <span className="text-xs text-[var(--color-text-faint)]">
+              {asset.name} ({asset.symbol})
+            </span>
+          ) : null}
         </div>
-        <IntervalSelector value={interval} onChange={setInterval} />
+      )}
+
+      <div className="mb-3">
+        <RangeSelector value={rangeId} onChange={setRangeId} />
       </div>
 
       {asset && asset.pair ? (
-        <PriceChart assetId={assetId} interval={interval} />
+        <PriceChart assetId={assetId} interval={range.interval} limit={range.limit} />
       ) : (
         <div className="flex h-[320px] items-center justify-center px-4 sm:h-[420px]">
           <p className="max-w-md text-center text-sm text-[var(--color-text-muted)]">
@@ -63,6 +51,8 @@ export function AssetChartPanel({
           </p>
         </div>
       )}
+
+      {footer ? <div className="mt-3">{footer}</div> : null}
     </section>
   );
 }

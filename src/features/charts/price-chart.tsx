@@ -5,7 +5,6 @@ import {
   CandlestickSeries,
   ColorType,
   CrosshairMode,
-  HistogramSeries,
   LineStyle,
   createChart,
   type IChartApi,
@@ -56,7 +55,15 @@ function toBar(candle: Candle) {
   };
 }
 
-export function PriceChart({ assetId, interval }: { assetId: string; interval: CandleInterval }) {
+export function PriceChart({
+  assetId,
+  interval,
+  limit = CANDLE_REQUEST_LIMIT_DEFAULT,
+}: {
+  assetId: string;
+  interval: CandleInterval;
+  limit?: number;
+}) {
   const asset = getAssetById(assetId);
   const decimals = asset?.displayDecimals ?? 2;
   const { quotes } = useMarketFeed();
@@ -64,7 +71,6 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const priceSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const priceLineRef = useRef<IPriceLine | null>(null);
   const lastCandleRef = useRef<Candle | null>(null);
 
@@ -73,7 +79,7 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
   const [hovered, setHovered] = useState<HoveredBar | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
-  const requestKey = `${assetId}|${interval}|${retryToken}`;
+  const requestKey = `${assetId}|${interval}|${limit}|${retryToken}`;
   const state: ChartState =
     result === null || loadedKey !== requestKey
       ? { status: "loading" }
@@ -111,15 +117,6 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
       wickDownColor: CHART_COLORS.down,
       priceFormat: { type: "price", precision: decimals, minMove: 10 ** -decimals },
     });
-    const volumeSeries = chart.addSeries(
-      HistogramSeries,
-      {
-        priceFormat: { type: "volume" },
-        lastValueVisible: false,
-        priceLineVisible: false,
-      },
-      1,
-    );
 
     chart.subscribeCrosshairMove((param) => {
       if (param.time === undefined) {
@@ -142,13 +139,11 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
 
     chartRef.current = chart;
     priceSeriesRef.current = priceSeries;
-    volumeSeriesRef.current = volumeSeries;
 
     return () => {
       chart.remove();
       chartRef.current = null;
       priceSeriesRef.current = null;
-      volumeSeriesRef.current = null;
       priceLineRef.current = null;
       lastCandleRef.current = null;
     };
@@ -157,7 +152,7 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
   useEffect(() => {
     const controller = new AbortController();
 
-    requestCandles(assetId, interval, CANDLE_REQUEST_LIMIT_DEFAULT, controller.signal)
+    requestCandles(assetId, interval, limit, controller.signal)
       .then((candles) => {
         if (controller.signal.aborted) return;
         setResult(candles.length > 0 ? { kind: "ready", candles } : { kind: "empty" });
@@ -178,7 +173,7 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
     return () => {
       controller.abort();
     };
-  }, [assetId, interval, requestKey]);
+  }, [assetId, interval, limit, requestKey]);
 
   const refreshPriceLine = (price: number) => {
     const series = priceSeriesRef.current;
@@ -198,22 +193,11 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
     if (result === null || loadedKey !== requestKey || result.kind !== "ready") return;
     const chart = chartRef.current;
     const priceSeries = priceSeriesRef.current;
-    const volumeSeries = volumeSeriesRef.current;
-    if (!chart || !priceSeries || !volumeSeries) return;
+    if (!chart || !priceSeries) return;
 
     const candles = result.candles;
     const bars = candles.map(toBar);
     priceSeries.setData(bars);
-    volumeSeries.setData(
-      candles.map((candle) => ({
-        time: toBarTime(candle),
-        value: Number(candle.volume),
-        color:
-          Number(candle.close) >= Number(candle.open)
-            ? CHART_COLORS.volumeUp
-            : CHART_COLORS.volumeDown,
-      })),
-    );
     lastCandleRef.current = candles[candles.length - 1];
     refreshPriceLine(bars[bars.length - 1].close);
     chart.timeScale().fitContent();
@@ -227,8 +211,7 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
     if (quotePrice === null || !Number.isFinite(quotePrice)) return;
     const last = lastCandleRef.current;
     const priceSeries = priceSeriesRef.current;
-    const volumeSeries = volumeSeriesRef.current;
-    if (!last || !priceSeries || !volumeSeries) return;
+    if (!last || !priceSeries) return;
 
     const intervalSeconds = CANDLE_INTERVAL_SECONDS[interval];
     const bucket = Math.floor(Date.now() / 1000 / intervalSeconds) * intervalSeconds;
@@ -239,11 +222,6 @@ export function PriceChart({ assetId, interval }: { assetId: string; interval: C
     const high = Math.max(Number(last.high), quotePrice);
     const low = Math.min(Number(last.low), quotePrice);
     priceSeries.update({ time: lastTime as UTCTimestamp, open, high, low, close: quotePrice });
-    volumeSeries.update({
-      time: lastTime as UTCTimestamp,
-      value: Number(last.volume),
-      color: quotePrice >= open ? CHART_COLORS.volumeUp : CHART_COLORS.volumeDown,
-    });
     lastCandleRef.current = {
       ...last,
       high: String(high),

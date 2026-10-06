@@ -94,9 +94,6 @@ export function SidebarNav() {
         <div className="mt-8 flex-1">
           <NavLinks />
         </div>
-        <p className="text-[11px] text-[var(--color-text-faint)]">
-          Paper trading only. No real money.
-        </p>
       </aside>
 
       <button

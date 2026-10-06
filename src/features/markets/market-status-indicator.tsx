@@ -1,7 +1,6 @@
 "use client";
 
 import { useMarketFeed } from "@/features/markets/market-feed-context";
-import { formatTimestamp } from "@/lib/formatting/format";
 
 const connectionLabels: Record<string, string> = {
   idle: "Connecting to market data",
@@ -10,6 +9,18 @@ const connectionLabels: Record<string, string> = {
   reconnecting: "Reconnecting to market data",
   closed: "Market data paused",
 };
+
+function formatUpdatedAt(epochMs: number): string {
+  return new Date(epochMs).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+}
 
 export function MarketStatusIndicator() {
   const { connection, lastUpdatedAt, error, initialLoading } = useMarketFeed();
@@ -34,7 +45,7 @@ export function MarketStatusIndicator() {
       </div>
       <span className="text-[11px] text-[var(--color-text-faint)]">
         {lastUpdatedAt
-          ? `Last updated: ${formatTimestamp(lastUpdatedAt)}`
+          ? `Last updated: ${formatUpdatedAt(lastUpdatedAt)}`
           : "Waiting for first update"}
       </span>
     </div>
