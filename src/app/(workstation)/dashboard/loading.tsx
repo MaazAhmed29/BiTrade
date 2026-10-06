@@ -1,7 +1,7 @@
 export default function DashboardLoading() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="mx-auto w-full max-w-[1600px] px-4 py-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_440px]">
         <div className="flex flex-col gap-6">
           <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
             <div className="h-6 w-56 animate-pulse rounded bg-[var(--color-surface-raised)]" />
