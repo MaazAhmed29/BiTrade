@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { LandingPage } from "@/features/landing/landing-page";
 
 export const dynamic = "force-dynamic";
 
@@ -7,5 +8,9 @@ export default async function Home() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
 
-  redirect(data?.claims ? "/dashboard" : "/login");
+  if (data?.claims) {
+    redirect("/dashboard");
+  }
+
+  return <LandingPage />;
 }

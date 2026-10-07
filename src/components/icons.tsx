@@ -120,6 +120,80 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 12h16" />
+      <path d="m14 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+export function TrendUpIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M3 17 9 11l4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </svg>
+  );
+}
+
+export function ShieldIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3 5 6v6c0 4.4 2.9 7.9 7 9 4.1-1.1 7-4.6 7-9V6z" />
+    </svg>
+  );
+}
+
+export function BotIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="4" y="8" width="16" height="12" rx="2" />
+      <path d="M12 4v4" />
+      <path d="M9 13h.01" />
+      <path d="M15 13h.01" />
+      <path d="M9 17h6" />
+    </svg>
+  );
+}
+
+export function UserIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-1a8 8 0 0 1 16 0v1" />
+    </svg>
+  );
+}
+
+export function WalletIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3" y="6" width="18" height="13" rx="2" />
+      <path d="M3 10h18" />
+      <path d="M16 14.5h2" />
+    </svg>
+  );
+}
+
+export function TargetIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3.5" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="m5 13 4 4 10-10" />
+    </svg>
+  );
+}
+
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg className={className ?? "h-7 w-7"} viewBox="0 0 24 24" fill="none" aria-hidden="true">
