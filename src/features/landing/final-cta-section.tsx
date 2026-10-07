@@ -4,7 +4,7 @@ import { ArrowRightIcon } from "@/components/icons";
 export function FinalCtaSection() {
   return (
     <section className="pb-16 sm:pb-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-16 xl:px-20">
         <div className="rounded-2xl bg-[var(--color-accent)] px-6 py-12 text-center sm:px-12 sm:py-16">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Ready to practice with live markets?

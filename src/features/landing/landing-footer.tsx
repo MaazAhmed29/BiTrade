@@ -2,8 +2,6 @@ import Link from "next/link";
 import { LogoMark } from "@/components/icons";
 
 const productLinks = [
-  { href: "#platform", label: "Platform" },
-  { href: "/markets", label: "Markets" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#faq", label: "FAQ" },
 ] as const;
@@ -16,7 +14,7 @@ const accountLinks = [
 export function LandingFooter() {
   return (
     <footer className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 py-12 sm:px-6 lg:px-16 xl:px-20">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link

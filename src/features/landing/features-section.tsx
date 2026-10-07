@@ -22,11 +22,8 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section
-      id="platform"
-      className="scroll-mt-20 border-y border-[var(--color-border)] bg-[var(--color-surface)] py-16 sm:py-20"
-    >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="border-y border-[var(--color-border)] bg-[var(--color-surface)] py-16 sm:py-20">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-16 xl:px-20">
         <SectionHeading
           title="Everything you need to practice smarter"
           description="Powerful tools, real market data and an AI assistant, all in one place."

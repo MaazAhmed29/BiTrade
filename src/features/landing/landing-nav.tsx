@@ -2,8 +2,6 @@ import Link from "next/link";
 import { LogoMark } from "@/components/icons";
 
 const sectionLinks = [
-  { href: "#platform", label: "Platform" },
-  { href: "/markets", label: "Markets" },
   { href: "#how-it-works", label: "How it works" },
   { href: "#faq", label: "FAQ" },
 ] as const;
@@ -11,7 +9,7 @@ const sectionLinks = [
 export function LandingNav() {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--color-border)] bg-[var(--color-background)]">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 w-full items-center gap-6 px-4 sm:px-6 lg:px-16 xl:px-20">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
