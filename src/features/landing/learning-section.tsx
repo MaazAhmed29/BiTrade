@@ -31,7 +31,7 @@ const outcomes = [
 export function LearningSection() {
   return (
     <section className="py-16 sm:py-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-16 xl:px-20">
         <SectionHeading
           title="What you will learn"
           description="BiTrade turns market data into hands on practice, with real consequences for your paper balance but none for your wallet."

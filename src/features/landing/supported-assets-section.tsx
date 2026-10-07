@@ -4,7 +4,7 @@ import { SectionHeading } from "./section-heading";
 export function SupportedAssetsSection() {
   return (
     <section className="border-y border-[var(--color-border)] bg-[var(--color-surface)] py-16 sm:py-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-16 xl:px-20">
         <SectionHeading
           title="15 assets, one workstation"
           description="The supported market stays fixed so you can focus on learning instead of chasing the latest trend."

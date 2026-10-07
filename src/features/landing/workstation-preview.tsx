@@ -152,31 +152,29 @@ export function WorkstationPreview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-[190px_1fr]">
+      <div className="grid grid-cols-1 sm:grid-cols-[210px_1fr]">
         <div className="hidden flex-col gap-3 border-r border-[var(--color-border)] p-4 sm:flex">
           <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-3">
             <div className="flex flex-col gap-3">
               {WATCHLIST.map((coin) => (
-                <div key={coin.symbol} className="flex items-center gap-2.5">
+                <div key={coin.symbol} className="flex items-center gap-2">
                   <span
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
                     style={{ backgroundColor: coin.color }}
                   >
                     {coin.symbol.slice(0, 1)}
                   </span>
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-medium">
                       {coin.name}{" "}
                       <span className="font-normal text-[var(--color-text-faint)]">
                         {coin.symbol}
                       </span>
                     </span>
-                    <span className="block font-mono text-[11px] text-[var(--color-text-muted)]">
+                    <span className="block truncate font-mono text-[11px] text-[var(--color-text-muted)]">
                       {coin.price}
+                      <span className="ml-1.5 text-[var(--color-positive)]">{coin.change}</span>
                     </span>
-                  </span>
-                  <span className="ml-auto shrink-0 font-mono text-[11px] text-[var(--color-positive)]">
-                    {coin.change}
                   </span>
                 </div>
               ))}

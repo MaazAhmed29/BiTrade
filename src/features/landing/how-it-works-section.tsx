@@ -27,7 +27,7 @@ export function HowItWorksSection() {
       id="how-it-works"
       className="scroll-mt-20 border-y border-[var(--color-border)] bg-[var(--color-surface)] py-16 sm:py-20"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-16 xl:px-20">
         <SectionHeading
           title="How it works"
           description="From sign up to your first paper trade in three simple steps."
