@@ -36,3 +36,9 @@ body {
     -apple-system,
     sans-serif;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

@@ -50,11 +50,9 @@ async function main() {
 
   const signedOutRoot = await fetchPage("/");
   check(
-    "Signed out: / redirects to /login",
-    signedOutRoot.status >= 300 &&
-      signedOutRoot.status < 400 &&
-      (signedOutRoot.location ?? "").startsWith("/login"),
-    `status=${signedOutRoot.status} location=${signedOutRoot.location}`,
+    "Signed out: / renders the landing page",
+    signedOutRoot.status === 200 && signedOutRoot.body.includes("Learn the market"),
+    `status=${signedOutRoot.status}`,
   );
 
   const signedOutDashboard = await fetchPage("/dashboard");
